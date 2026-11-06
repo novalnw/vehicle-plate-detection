@@ -104,7 +104,7 @@ section[data-testid="stSidebar"] .stRadio label:has(input:checked) { color: var(
 
 
 if "dark" not in st.session_state:
-    st.session_state["dark"] = False
+    st.session_state["dark"] = True
 st.markdown(build_css(st.session_state["dark"]), unsafe_allow_html=True)
 
 
