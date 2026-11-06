@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+runs/
+model/*.pt
+dataset/
+samples/output/
+.env
+.streamlit/secrets.toml
+.idea/
+.vscode/
