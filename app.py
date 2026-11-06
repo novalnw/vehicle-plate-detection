@@ -177,16 +177,64 @@ section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
   flex-wrap: wrap;
 }
 .lp-media {
+  position: relative;
   border: 1px solid var(--border);
   border-radius: 18px;
   overflow: hidden;
   background: var(--surface);
   box-shadow: 0 24px 60px rgba(0,0,0,0.35);
 }
-.lp-media img {
+.lp-media img.main {
   display: block;
   width: 100%;
   height: auto;
+}
+.lp-media .logo-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 92px;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #101418;
+  padding: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+}
+.lp-detail {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 2.5rem;
+  padding: 0.4rem 0 1rem;
+}
+.lp-detail p {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0;
+}
+.lp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lp-list li {
+  color: var(--text);
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.97rem;
+}
+.lp-list li:last-child {
+  border-bottom: none;
+}
+.lp-list .k {
+  color: var(--accent);
+  font-weight: 600;
+}
+@media (max-width: 768px) {
+  .lp-detail {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+  }
 }
 
 .lp-strip {
@@ -380,9 +428,12 @@ if route == "Beranda":
         st.markdown("</div>", unsafe_allow_html=True)
     with hero_r:
         st.markdown(
-            "<div class='lp-media'><img src='data:image/jpeg;base64,"
+            "<div class='lp-media'><img class='main' src='data:image/jpeg;base64,"
             + _b64_image("samples/sample_plate1.jpg")
-            + "' alt='contoh kendaraan'></div>",
+            + "' alt='contoh kendaraan'>"
+            "<img class='logo-badge' src='data:image/jpeg;base64,"
+            + _b64_image("LogoVall.jpeg")
+            + "' alt='Vall'></div>",
             unsafe_allow_html=True,
         )
 
@@ -397,6 +448,30 @@ if route == "Beranda":
         "</div>",
         unsafe_allow_html=True,
     )
+
+    st.markdown("<hr class='divider'>", unsafe_allow_html=True)
+    st.markdown("## Detail proyek")
+    detail_l, detail_r = st.columns([3, 2], gap="large")
+    with detail_l:
+        st.markdown(
+            "<div class='lp-detail'><p>"
+            "Aplikasi web ini membaca plat nomor dari foto kendaraan menggunakan "
+            "optical character recognition (OCR). Unggah gambar atau tangkap lewat "
+            "kamera HP, lalu sistem menandai lokasi teks plat pada gambar. "
+            "Dirancang ringan agar bisa dipakai langsung dari perangkat apa pun."
+            "</p></div>",
+            unsafe_allow_html=True,
+        )
+    with detail_r:
+        st.markdown(
+            "<ul class='lp-list'>"
+            "<li><span class='k'>Fungsi</span> — deteksi & baca teks plat</li>"
+            "<li><span class='k'>Teknologi</span> — EasyOCR, Python, Streamlit</li>"
+            "<li><span class='k'>Deploy</span> — Streamlit Cloud, gratis</li>"
+            "<li><span class='k'>Catatan</span> — akurasi bergantung kualitas foto</li>"
+            "</ul>",
+            unsafe_allow_html=True,
+        )
 
     st.markdown("<div class='lp-note'>Vall · dibuat dengan Streamlit</div>", unsafe_allow_html=True)
 
