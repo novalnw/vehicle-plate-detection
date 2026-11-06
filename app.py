@@ -12,9 +12,10 @@ from pipeline import PlatePipeline
 st.set_page_config(page_title="Deteksi Plat Nomor", page_icon="🚗", layout="wide")
 
 
-@st.cache_resource
 def get_pipeline():
-    return PlatePipeline()
+    if "pipeline" not in st.session_state:
+        st.session_state["pipeline"] = PlatePipeline()
+    return st.session_state["pipeline"]
 
 
 @st.cache_resource
@@ -89,4 +90,6 @@ with tab_webcam:
     if pic is not None:
         file_bytes = np.frombuffer(pic.read(), np.uint8)
         image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-        process_and_render(image, "Hasil deteksi webcam")
+        st.image(image, channels="BGR", caption="Foto dari webcam", use_container_width=True)
+        if st.button("🔍 Deteksi", key="detect_webcam"):
+            process_and_render(image, "Hasil deteksi webcam")
