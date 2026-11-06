@@ -292,6 +292,15 @@ def _b64_image(path):
     return base64.b64encode(Path(path).read_bytes()).decode()
 
 
+def go_deteksi():
+    st.session_state["nav"] = "Deteksi"
+
+
+def go_demo():
+    st.session_state["nav"] = "Deteksi"
+    st.session_state["demo_scroll"] = True
+
+
 def draw_annotations(img, results):
     draw = ImageDraw.Draw(img)
     try:
@@ -362,13 +371,8 @@ if route == "Beranda":
     hero_l, hero_r = st.columns([6, 5], gap="large")
     with hero_l:
         st.markdown("<div class='lp-cta'>", unsafe_allow_html=True)
-        if st.button("Mulai deteksi", type="primary", use_container_width=True):
-            st.session_state["nav"] = "Deteksi"
-            st.rerun()
-        if st.button("Lihat contoh", type="secondary", use_container_width=True):
-            st.session_state["nav"] = "Deteksi"
-            st.session_state["demo_scroll"] = True
-            st.rerun()
+        st.button("Mulai deteksi", type="primary", use_container_width=True, on_click=go_deteksi)
+        st.button("Lihat contoh", type="secondary", use_container_width=True, on_click=go_demo)
         st.markdown("</div>", unsafe_allow_html=True)
     with hero_r:
         st.markdown(
