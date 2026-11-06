@@ -38,6 +38,30 @@ html, body, [class*="css"] {
     linear-gradient(180deg, #101418 0%, #0C0F12 100%);
 }
 
+/* clean top bar: hide deploy/toolbar, keep sidebar hamburger */
+[data-testid="stHeader"] {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+[data-testid="stToolbar"],
+[data-testid="stDeployButton"] {
+  display: none !important;
+}
+[data-testid="stSidebarCollapsedControl"] {
+  color: var(--text);
+}
+@media (max-width: 768px) {
+  [data-testid="stSidebarCollapsedControl"] {
+    width: 44px;
+    height: 44px;
+  }
+  .block-container {
+    padding-top: 4.4rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
 .block-container {
   padding-top: 2.6rem;
   padding-bottom: 4rem;
