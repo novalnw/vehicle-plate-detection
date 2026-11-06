@@ -309,15 +309,22 @@ with st.sidebar:
     st.markdown("Ditenagai EasyOCR · berjalan di Streamlit Cloud.")
 
 # ---------------- Hero ----------------
-st.markdown(
-    "<div class='hero'>"
-    "<div class='tag'>Pendeteksi plat nomor</div>"
-    "<h1>Foto kendaraan, langsung terbaca platnya.</h1>"
-    "<p>Unggah foto atau pakai kamera. Sistem menemukan teks plat nomor "
-    "dan menandainya pada gambar.</p>"
-    "</div>",
-    unsafe_allow_html=True,
-)
+hero_logo, hero_body = st.columns([1, 4], vertical_alignment="center")
+with hero_logo:
+    try:
+        st.image("LogoVall.jpeg", width=118)
+    except Exception:
+        pass
+with hero_body:
+    st.markdown(
+        "<div class='hero'>"
+        "<div class='tag'>Pendeteksi plat nomor</div>"
+        "<h1>Foto kendaraan, langsung terbaca platnya.</h1>"
+        "<p>Unggah foto atau pakai kamera. Sistem menemukan teks plat nomor "
+        "dan menandainya pada gambar.</p>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 st.markdown(
     "<div class='feature-strip'>"
