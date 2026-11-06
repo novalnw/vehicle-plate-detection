@@ -448,14 +448,37 @@ if route == "Beranda":
 
     st.markdown("<hr class='divider'>", unsafe_allow_html=True)
     st.markdown("## Detail proyek")
+
+    st.markdown(
+        "<div class='lp-detail'><p>"
+        "Vall Plate Detector adalah proyek web yang membaca plat nomor dari foto "
+        "kendaraan. Aplikasi ini memakai optical character recognition (OCR) untuk "
+        "menemukan dan menandai teks plat pada gambar, sehingga hasilnya langsung "
+        "terlihat tanpa perlu disetel manual."
+        "</p></div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("### Cara kerja")
+    st.markdown(
+        "<ol class='lp-list' style='list-style:decimal inside'>"
+        "<li><span class='k'>Pasang gambar</span> — unggah foto atau ambil via kamera HP.</li>"
+        "<li><span class='k'>Pindai</span> — sistem memindai gambar untuk mencari teks.</li>"
+        "<li><span class='k'>Filter</span> — teks yang cocok dengan pola plat disaring.</li>"
+        "<li><span class='k'>Tandai</span> — lokasi dan teks plat ditandai pada gambar.</li>"
+        "</ol>",
+        unsafe_allow_html=True,
+    )
+
     detail_l, detail_r = st.columns([3, 2], gap="large")
     with detail_l:
         st.markdown(
             "<div class='lp-detail'><p>"
-            "Aplikasi web ini membaca plat nomor dari foto kendaraan menggunakan "
-            "optical character recognition (OCR). Unggah gambar atau tangkap lewat "
-            "kamera HP, lalu sistem menandai lokasi teks plat pada gambar. "
-            "Dirancang ringan agar bisa dipakai langsung dari perangkat apa pun."
+            "Proyek ini menggunakan EasyOCR, pustaka Python untuk pengenalan teks "
+            "pada gambar, dan berjalan di atas Streamlit sebagai antarmuka web. "
+            "Seluruh proses berlangsung otomatis: foto masuk, teks plat keluar. "
+            "Aplikasi tetap ringan karena hanya aktif saat kamu menekan tombol "
+            "deteksi."
             "</p></div>",
             unsafe_allow_html=True,
         )
