@@ -86,6 +86,7 @@ section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
 .stTabs [data-baseweb="tab-list"] {
   gap: 0.4rem;
   background: transparent;
+  margin-top: 0.7rem;
 }
 .stTabs [data-baseweb="tab"] {
   height: auto;
@@ -100,6 +101,9 @@ section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
   background: var(--accent) !important;
   color: #12171A !important;
   border-color: var(--accent) !important;
+}
+[data-baseweb="tab-panel"] {
+  padding-top: 1.4rem;
 }
 
 /* buttons */
