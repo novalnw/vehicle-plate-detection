@@ -1,48 +1,37 @@
-import cv2
+import re
 
-from detector import PlateDetector, VehicleDetector
 from ocr import PlateOCR
+
+PLATE_RE = re.compile(r"^[A-Z]{1,3}\d{1,4}[A-Z]{0,3}\d{0,4}$")
 
 
 class PlatePipeline:
-    def __init__(self, vehicle_model="yolov8n.pt", plate_model="model/plate_model.pt"):
-        self.vehicle_detector = VehicleDetector(vehicle_model)
-        self.plate_detector = PlateDetector(plate_model)
+    def __init__(self):
         self.ocr = PlateOCR()
 
     def process_image_bytes(self, image):
         return self.process_image(image)
 
-    def process_image(self, image_path):
-        image = cv2.imread(str(image_path))
-        if image is None:
-            raise ValueError(f"Cannot read image: {image_path}")
-
-        vehicles = self.vehicle_detector.detect(image)
+    def process_image(self, image):
+        scans = self.ocr.scan(image)
         results = []
-        for vehicle in vehicles:
-            x1, y1, x2, y2 = vehicle["bbox"]
-            crop = image[y1:y2, x1:x2]
-            try:
-                plates = self.plate_detector.detect(crop)
-            except FileNotFoundError:
-                plates = []
-
-            vehicle_plate = None
-            for plate in plates:
-                px1, py1, px2, py2 = plate["bbox"]
-                plate_crop = crop[py1:py2, px1:px2]
-                text, conf = self.ocr.read(plate_crop)
-                if text is not None:
-                    vehicle_plate = {"text": text, "confidence": round(float(conf), 4)}
-                    break
-
+        for item in scans:
+            if not PLATE_RE.match(item["text"]):
+                continue
+            xs = [p[0] for p in item["bbox"]]
+            ys = [p[1] for p in item["bbox"]]
+            px1, py1 = int(min(xs)), int(min(ys))
+            px2, py2 = int(max(xs)), int(max(ys))
             results.append(
                 {
-                    "vehicle": vehicle["label"],
-                    "vehicle_confidence": vehicle["confidence"],
-                    "vehicle_bbox": [x1, y1, x2, y2],
-                    "plate": vehicle_plate,
+                    "vehicle": "kendaraan",
+                    "vehicle_confidence": round(float(item["confidence"]), 4),
+                    "vehicle_bbox": [px1, py1, px2, py2],
+                    "plate": {
+                        "text": item["text"],
+                        "confidence": round(float(item["confidence"]), 4),
+                        "bbox": [px1, py1, px2, py2],
+                    },
                 }
             )
         return results

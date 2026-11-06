@@ -1,8 +1,5 @@
-numpy==1.26.4
-opencv-python-headless==4.9.0.80
-ultralytics==8.2.101
-easyocr==1.7.2
-fastapi
-uvicorn[standard]
-python-multipart
+numpy
+opencv-python-headless
+easyocr
 streamlit
+pillow

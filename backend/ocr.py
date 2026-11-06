@@ -11,6 +11,15 @@ class PlateOCR:
     def __init__(self, languages=("en",)):
         self.reader = easyocr.Reader(languages, gpu=False)
 
+    def scan(self, image):
+        result = self.reader.readtext(image, detail=1, allowlist=ALLOWED_CHARS.pattern)
+        scans = []
+        for box, text, conf in result:
+            text = text.replace(" ", "")
+            if PLATE_PATTERN.search(text):
+                scans.append({"text": text, "confidence": conf, "bbox": box})
+        return scans
+
     def read(self, plate_crop):
         result = self.reader.readtext(plate_crop, detail=1, allowlist=ALLOWED_CHARS.pattern)
         if not result:
