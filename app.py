@@ -13,304 +13,99 @@ from pipeline import PlatePipeline
 
 st.set_page_config(page_title="Vall — Deteksi Plat Nomor", page_icon="🚗", layout="wide")
 
-CUSTOM_CSS = """
-<style>
+
+def build_css(dark):
+    if dark:
+        paper, surface, surface2, border_, ink, muted = (
+            "#0F1316", "#171C20", "#1E2429", "#2A333A", "#E6EDF2", "#8F9CA8",
+        )
+        accent, accent_soft, ok, danger = (
+            "#5B9BFF", "#162B44", "#36C48E", "#FF6B6B",
+        )
+        btn_text, btn_hover = "#0B1220", "#7FB4FF"
+        shadow = "rgba(0,0,0,0.5)"
+    else:
+        paper, surface, surface2, border_, ink, muted = (
+            "#F3F5F6", "#FFFFFF", "#ECF0F2", "#D8DEE3", "#15181B", "#5B6670",
+        )
+        accent, accent_soft, ok, danger = (
+            "#17488F", "#E8F0FA", "#157A4E", "#BC3A2B",
+        )
+        btn_text, btn_hover = "#FFFFFF", "#103A6E"
+        shadow = "rgba(21,24,27,0.08)"
+
+    root = (
+        ":root{"
+        f"--paper:{paper};--surface:{surface};--surface2:{surface2};"
+        f"--border:{border_};--ink:{ink};--muted:{muted};"
+        f"--accent:{accent};--accent-soft:{accent_soft};"
+        f"--ok:{ok};--danger:{danger};--shadow:{shadow};"
+        f"--btn-text:{btn_text};--btn-hover:{btn_hover};"
+        "}"
+    )
+    body = """
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap');
-
-:root {
-  --paper: #F3F5F6;
-  --surface: #FFFFFF;
-  --surface2: #ECF0F2;
-  --border: #D8DEE3;
-  --ink: #15181B;
-  --muted: #5B6670;
-  --accent: #17488F;
-  --accent-soft: #E8F0FA;
-  --ok: #157A4E;
-  --danger: #BC3A2B;
-}
-
-html, body, [class*="css"] {
-  font-family: 'Inter', system-ui, sans-serif;
-  color: var(--ink);
-}
-
-.stApp {
-  background:
-    linear-gradient(180deg, #F6F8F9 0%, #EEF1F3 100%);
-}
-
-.block-container {
-  padding-top: 2.2rem;
-  padding-bottom: 4.5rem;
-  max-width: 1120px;
-}
-
-h1, h2, h3 {
-  font-family: 'Source Serif 4', Georgia, serif;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-}
+html, body, [class*="css"] { font-family: 'Inter', system-ui, sans-serif; color: var(--ink); }
+.stApp { background: linear-gradient(180deg, var(--paper) 0%, var(--surface2) 100%); }
+.block-container { padding-top: 2.2rem; padding-bottom: 4.5rem; max-width: 1120px; }
+h1, h2, h3 { font-family: 'Source Serif 4', Georgia, serif; color: var(--ink); letter-spacing: -0.01em; }
 h1 { font-size: 2.75rem; line-height: 1.08; font-weight: 700; }
 h2 { font-size: 1.9rem; font-weight: 700; }
 h3 { font-size: 1.3rem; font-weight: 600; }
-
-/* clean top bar */
-[data-testid="stHeader"] {
-  background: transparent !important;
-  border-bottom: 1px solid var(--border);
-}
-[data-testid="stToolbar"],
-[data-testid="stDeployButton"] {
-  display: none !important;
-}
-[data-testid="stSidebarCollapsedControl"] {
-  color: var(--ink);
-}
-
-/* sidebar */
-section[data-testid="stSidebar"] {
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-}
-section[data-testid="stSidebar"] .stRadio label {
-  color: var(--muted);
-  font-weight: 500;
-}
-section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
-  color: var(--accent);
-}
-
-/* tabs */
-.stTabs [data-baseweb="tab-list"] {
-  gap: 0.4rem;
-  background: transparent;
-  margin-top: 0.6rem;
-}
-.stTabs [data-baseweb="tab"] {
-  height: auto;
-  padding: 0.55rem 1.1rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  color: var(--muted);
-  font-weight: 500;
-}
-.stTabs [aria-selected="true"] {
-  background: var(--accent) !important;
-  color: #fff !important;
-  border-color: var(--accent) !important;
-}
-[data-baseweb="tab-panel"] {
-  padding-top: 1.3rem;
-}
-
-/* buttons */
-.stButton > button {
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  color: #fff;
-  background: var(--accent);
-  border: 1px solid var(--accent);
-  border-radius: 8px;
-  padding: 0.55rem 1.35rem;
-  transition: background .12s ease, transform .12s ease;
-}
-.stButton > button:hover {
-  background: #103a6e;
-  border-color: #103a6e;
-  transform: translateY(-1px);
-}
-.stButton > button:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-}
-.stButton > button[kind="secondary"] {
-  background: transparent;
-  color: var(--ink);
-  border-color: var(--border);
-}
-.stButton > button[kind="secondary"]:hover {
-  border-color: var(--ink);
-  background: transparent;
-  transform: none;
-}
-
-/* file uploader */
-.stFileUploader section {
-  background: var(--surface);
-  border: 1px dashed var(--border);
-  border-radius: 10px;
-}
-.stFileUploader section:hover {
-  border-color: var(--accent);
-}
-
-/* ---------- landing ---------- */
-.lp-hero {
-  padding: 1.6rem 0 2rem;
-  border-bottom: 3px double var(--ink);
-}
-.lp-tag {
-  color: var(--accent);
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: .9rem;
-}
-.lp-title {
-  font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 3rem;
-  line-height: 1.05;
-  font-weight: 700;
-  max-width: 15ch;
-}
-.lp-sub {
-  color: var(--muted);
-  font-size: 1.1rem;
-  line-height: 1.65;
-  max-width: 44ch;
-  margin-top: 1.1rem;
-}
-.lp-cta {
-  display: flex;
-  gap: .7rem;
-  margin-top: 1.8rem;
-  flex-wrap: wrap;
-}
-.lp-media {
-  background: var(--surface);
-  border: 1.5px solid var(--ink);
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 12px 14px 0 rgba(21,24,27,0.06);
-}
-.lp-media img.main {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 4px;
-}
-
-.lp-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.4rem 3rem;
-  padding: 1.7rem 0;
-  margin: 2.4rem 0 1rem;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-.lp-item .t {
-  color: var(--ink);
-  font-weight: 600;
-  font-size: 1.02rem;
-}
-.lp-item .d {
-  color: var(--muted);
-  font-size: .92rem;
-  margin-top: .15rem;
-}
-
-.lp-note {
-  color: var(--muted);
-  font-size: .9rem;
-  text-align: center;
-  margin-top: 2.8rem;
-}
-
-.lp-detail p {
-  color: var(--muted);
-  line-height: 1.75;
-  margin: 0;
-}
-.lp-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.lp-list li {
-  color: var(--ink);
-  padding: 0.55rem 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.97rem;
-}
-.lp-list li:last-child {
-  border-bottom: none;
-}
-.lp-list .k {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.divider {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 2.8rem 0;
-}
-
-/* ---------- tool ---------- */
-.demo-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: .5rem;
-}
-.demo-head p {
-  color: var(--muted);
-  margin: 0;
-}
-.round {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: .9rem;
-}
-.result-block {
-  background: var(--surface);
-  border: 2.5px solid var(--ink);
-  border-radius: 8px;
-  padding: 0.9rem 1.2rem;
-  margin-top: .6rem;
-  box-shadow: 6px 7px 0 rgba(21,24,27,0.07);
-}
-.result-plate {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: .05em;
-}
-.result-meta {
-  color: var(--muted);
-  font-size: .9rem;
-  margin-top: .15rem;
-}
-.stWarning {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-radius: 8px;
-  border: 1px solid transparent;
-}
-
+[data-testid="stHeader"] { background: transparent !important; border-bottom: 1px solid var(--border); }
+[data-testid="stToolbar"], [data-testid="stDeployButton"] { display: none !important; }
+[data-testid="stSidebarCollapsedControl"] { color: var(--ink); }
+section[data-testid="stSidebar"] { background: var(--surface); border-right: 1px solid var(--border); }
+section[data-testid="stSidebar"] .stRadio label { color: var(--muted); font-weight: 500; }
+section[data-testid="stSidebar"] .stRadio label:has(input:checked) { color: var(--accent); }
+.stTabs [data-baseweb="tab-list"] { gap: 0.4rem; background: transparent; margin-top: 0.6rem; }
+.stTabs [data-baseweb="tab"] { height: auto; padding: 0.55rem 1.1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 7px; color: var(--muted); font-weight: 500; }
+.stTabs [aria-selected="true"] { background: var(--accent) !important; color: var(--btn-text) !important; border-color: var(--accent) !important; }
+[data-baseweb="tab-panel"] { padding-top: 1.3rem; }
+.stButton > button { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--btn-text); background: var(--accent); border: 1px solid var(--accent); border-radius: 8px; padding: 0.55rem 1.35rem; transition: background .12s ease, transform .12s ease; }
+.stButton > button:hover { background: var(--btn-hover); border-color: var(--btn-hover); transform: translateY(-1px); }
+.stButton > button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.stButton > button[kind="secondary"] { background: transparent; color: var(--ink); border-color: var(--border); }
+.stButton > button[kind="secondary"]:hover { border-color: var(--ink); background: transparent; transform: none; }
+.stFileUploader section { background: var(--surface); border: 1px dashed var(--border); border-radius: 10px; }
+.stFileUploader section:hover { border-color: var(--accent); }
+.lp-hero { padding: 1.6rem 0 2rem; border-bottom: 3px double var(--ink); }
+.lp-tag { color: var(--accent); font-weight: 600; font-size: 0.95rem; margin-bottom: .9rem; }
+.lp-title { font-family: 'Source Serif 4', Georgia, serif; font-size: 3rem; line-height: 1.05; font-weight: 700; max-width: 15ch; }
+.lp-sub { color: var(--muted); font-size: 1.1rem; line-height: 1.65; max-width: 44ch; margin-top: 1.1rem; }
+.lp-cta { display: flex; gap: .7rem; margin-top: 1.8rem; flex-wrap: wrap; }
+.lp-media { background: var(--surface); border: 1.5px solid var(--ink); border-radius: 8px; padding: 8px; box-shadow: 12px 14px 0 var(--shadow); }
+.lp-media img.main { display: block; width: 100%; height: auto; border-radius: 4px; }
+.lp-strip { display: flex; flex-wrap: wrap; gap: 1.4rem 3rem; padding: 1.7rem 0; margin: 2.4rem 0 1rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.lp-item .t { color: var(--ink); font-weight: 600; font-size: 1.02rem; }
+.lp-item .d { color: var(--muted); font-size: .92rem; margin-top: .15rem; }
+.lp-note { color: var(--muted); font-size: .9rem; text-align: center; margin-top: 2.8rem; }
+.lp-detail p { color: var(--muted); line-height: 1.75; margin: 0; }
+.lp-list { list-style: none; margin: 0; padding: 0; }
+.lp-list li { color: var(--ink); padding: 0.55rem 0; border-bottom: 1px solid var(--border); font-size: 0.97rem; }
+.lp-list li:last-child { border-bottom: none; }
+.lp-list .k { color: var(--accent); font-weight: 600; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.8rem 0; }
+.demo-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: .5rem; }
+.demo-head p { color: var(--muted); margin: 0; }
+.round { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .9rem; }
+.result-block { background: var(--surface); border: 2.5px solid var(--ink); border-radius: 8px; padding: 0.9rem 1.2rem; margin-top: .6rem; box-shadow: 6px 7px 0 var(--shadow); }
+.result-plate { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--ink); letter-spacing: .05em; }
+.result-meta { color: var(--muted); font-size: .9rem; margin-top: .15rem; }
+.stWarning { background: var(--accent-soft); color: var(--accent); border-radius: 8px; border: 1px solid transparent; }
 @media (max-width: 768px) {
-  [data-testid="stSidebarCollapsedControl"] {
-    width: 44px;
-    height: 44px;
-  }
-  .block-container {
-    padding-top: 4.2rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+  [data-testid="stSidebarCollapsedControl"] { width: 44px; height: 44px; }
+  .block-container { padding-top: 4.2rem; padding-left: 1rem; padding-right: 1rem; }
   .lp-title { font-size: 2.3rem; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .stButton > button { transition: none; }
-}
-</style>
+@media (prefers-reduced-motion: reduce) { .stButton > button { transition: none; } }
 """
-st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+    return "<style>" + root + body + "</style>"
+
+
+if "dark" not in st.session_state:
+    st.session_state["dark"] = False
+st.markdown(build_css(st.session_state["dark"]), unsafe_allow_html=True)
 
 
 def get_pipeline():
@@ -342,13 +137,13 @@ def draw_annotations(img, results):
         font_small = font
     for r in results:
         x1, y1, x2, y2 = r["vehicle_bbox"]
-        draw.rectangle([x1, y1, x2, y2], outline=(23, 72, 143), width=4)
+        draw.rectangle([x1, y1, x2, y2], outline=(91, 155, 255), width=4)
         label = f"{r['vehicle']} · {r['vehicle_confidence']:.2f}"
-        draw.text((x1, y1 - 34), label, fill=(23, 72, 143), font=font_small)
+        draw.text((x1, y1 - 34), label, fill=(91, 155, 255), font=font_small)
         if r["plate"]:
             px1, py1, px2, py2 = r["plate"]["bbox"]
-            draw.rectangle([px1, py1, px2, py2], outline=(21, 122, 78), width=4)
-            draw.text((px1, py1 - 34), r["plate"]["text"], fill=(21, 122, 78), font=font)
+            draw.rectangle([px1, py1, px2, py2], outline=(54, 196, 142), width=4)
+            draw.text((px1, py1 - 34), r["plate"]["text"], fill=(54, 196, 142), font=font)
     return img
 
 
@@ -384,6 +179,7 @@ with st.sidebar:
     except Exception:
         pass
     st.markdown("### Vall Plate Detector")
+    dark = st.toggle("Mode gelap", key="dark")
     route = st.radio("Navigasi", ["Beranda", "Deteksi"], label_visibility="collapsed", key="nav")
     st.divider()
     st.caption("Membaca plat nomor dari foto kendaraan.")
