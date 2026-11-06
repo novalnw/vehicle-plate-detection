@@ -179,7 +179,12 @@ with st.sidebar:
     except Exception:
         pass
     st.markdown("### Vall Plate Detector")
-    dark = st.toggle("Mode gelap", key="dark")
+    dark_sel = st.radio(
+        "Tema",
+        ["🌙 Gelap", "☀️ Terang"],
+        index=0 if st.session_state.get("dark", True) else 1,
+    )
+    st.session_state["dark"] = (dark_sel == "🌙 Gelap")
     route = st.radio("Navigasi", ["Beranda", "Deteksi"], label_visibility="collapsed", key="nav")
     st.divider()
     st.caption("Membaca plat nomor dari foto kendaraan.")
