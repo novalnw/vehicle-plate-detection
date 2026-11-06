@@ -15,63 +15,62 @@ st.set_page_config(page_title="Vall — Deteksi Plat Nomor", page_icon="🚗", l
 
 CUSTOM_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap');
 
 :root {
-  --bg: #101418;
-  --surface: #171D22;
-  --surface2: #1E262D;
-  --border: #2A333B;
-  --text: #E8EEF4;
-  --muted: #93A1AE;
-  --accent: #FFB020;
-  --ok: #35C48E;
-  --danger: #FF6B6B;
+  --paper: #F3F5F6;
+  --surface: #FFFFFF;
+  --surface2: #ECF0F2;
+  --border: #D8DEE3;
+  --ink: #15181B;
+  --muted: #5B6670;
+  --accent: #17488F;
+  --accent-soft: #E8F0FA;
+  --ok: #157A4E;
+  --danger: #BC3A2B;
 }
 
 html, body, [class*="css"] {
   font-family: 'Inter', system-ui, sans-serif;
+  color: var(--ink);
 }
 
 .stApp {
   background:
-    radial-gradient(900px 460px at 85% -10%, rgba(255,176,32,0.09), transparent 60%),
-    linear-gradient(180deg, #101418 0%, #0C0F12 100%);
+    linear-gradient(180deg, #F6F8F9 0%, #EEF1F3 100%);
 }
 
 .block-container {
-  padding-top: 2.4rem;
-  padding-bottom: 4rem;
+  padding-top: 2.2rem;
+  padding-bottom: 4.5rem;
   max-width: 1120px;
 }
 
 h1, h2, h3 {
-  font-family: 'Space Grotesk', sans-serif;
-  color: var(--text);
-  letter-spacing: -0.02em;
+  font-family: 'Source Serif 4', Georgia, serif;
+  color: var(--ink);
+  letter-spacing: -0.01em;
 }
-h1 {
-  font-size: 2.6rem;
-  line-height: 1.04;
-  font-weight: 700;
-}
+h1 { font-size: 2.75rem; line-height: 1.08; font-weight: 700; }
+h2 { font-size: 1.9rem; font-weight: 700; }
+h3 { font-size: 1.3rem; font-weight: 600; }
 
 /* clean top bar */
 [data-testid="stHeader"] {
   background: transparent !important;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid var(--border);
 }
 [data-testid="stToolbar"],
 [data-testid="stDeployButton"] {
   display: none !important;
 }
 [data-testid="stSidebarCollapsedControl"] {
-  color: var(--text);
+  color: var(--ink);
 }
 
 /* sidebar */
 section[data-testid="stSidebar"] {
-  background: linear-gradient(180deg, #151A1F, #101418);
+  background: var(--surface);
   border-right: 1px solid var(--border);
 }
 section[data-testid="stSidebar"] .stRadio label {
@@ -86,63 +85,62 @@ section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
 .stTabs [data-baseweb="tab-list"] {
   gap: 0.4rem;
   background: transparent;
-  margin-top: 0.7rem;
+  margin-top: 0.6rem;
 }
 .stTabs [data-baseweb="tab"] {
   height: auto;
-  padding: 0.65rem 1.2rem;
+  padding: 0.55rem 1.1rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 7px;
   color: var(--muted);
   font-weight: 500;
 }
 .stTabs [aria-selected="true"] {
   background: var(--accent) !important;
-  color: #12171A !important;
+  color: #fff !important;
   border-color: var(--accent) !important;
 }
 [data-baseweb="tab-panel"] {
-  padding-top: 1.4rem;
+  padding-top: 1.3rem;
 }
 
 /* buttons */
 .stButton > button {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 500;
-  color: #12171A;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  color: #fff;
   background: var(--accent);
   border: 1px solid var(--accent);
-  border-radius: 999px;
-  padding: 0.6rem 1.5rem;
-  transition: transform .12s ease, box-shadow .12s ease;
+  border-radius: 8px;
+  padding: 0.55rem 1.35rem;
+  transition: background .12s ease, transform .12s ease;
 }
 .stButton > button:hover {
-  background: #FFC44D;
-  border-color: #FFC44D;
+  background: #103a6e;
+  border-color: #103a6e;
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(255,176,32,0.25);
 }
 .stButton > button:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
 .stButton > button[kind="secondary"] {
   background: transparent;
-  color: var(--text);
+  color: var(--ink);
   border-color: var(--border);
 }
 .stButton > button[kind="secondary"]:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  box-shadow: none;
+  border-color: var(--ink);
+  background: transparent;
+  transform: none;
 }
 
 /* file uploader */
 .stFileUploader section {
   background: var(--surface);
   border: 1px dashed var(--border);
-  border-radius: 14px;
+  border-radius: 10px;
 }
 .stFileUploader section:hover {
   border-color: var(--accent);
@@ -150,25 +148,28 @@ section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
 
 /* ---------- landing ---------- */
 .lp-hero {
-  padding: 1.2rem 0 2rem;
+  padding: 1.6rem 0 2rem;
+  border-bottom: 3px double var(--ink);
 }
 .lp-tag {
   color: var(--accent);
   font-weight: 600;
-  font-size: 1rem;
-  margin-bottom: .8rem;
+  font-size: 0.95rem;
+  margin-bottom: .9rem;
 }
 .lp-title {
-  font-size: 3.1rem;
-  line-height: 1.02;
-  max-width: 14ch;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 3rem;
+  line-height: 1.05;
+  font-weight: 700;
+  max-width: 15ch;
 }
 .lp-sub {
   color: var(--muted);
-  font-size: 1.12rem;
+  font-size: 1.1rem;
   line-height: 1.65;
-  max-width: 42ch;
-  margin-top: 1.2rem;
+  max-width: 44ch;
+  margin-top: 1.1rem;
 }
 .lp-cta {
   display: flex;
@@ -177,77 +178,30 @@ section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
   flex-wrap: wrap;
 }
 .lp-media {
-  position: relative;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  overflow: hidden;
   background: var(--surface);
-  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 12px 14px 0 rgba(21,24,27,0.06);
 }
 .lp-media img.main {
   display: block;
   width: 100%;
   height: auto;
-}
-.lp-media .logo-badge {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  width: 92px;
-  height: auto;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: #101418;
-  padding: 6px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
-}
-.lp-detail {
-  display: grid;
-  grid-template-columns: 3fr 2fr;
-  gap: 2.5rem;
-  padding: 0.4rem 0 1rem;
-}
-.lp-detail p {
-  color: var(--muted);
-  line-height: 1.7;
-  margin: 0;
-}
-.lp-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.lp-list li {
-  color: var(--text);
-  padding: 0.55rem 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.97rem;
-}
-.lp-list li:last-child {
-  border-bottom: none;
-}
-.lp-list .k {
-  color: var(--accent);
-  font-weight: 600;
-}
-@media (max-width: 768px) {
-  .lp-detail {
-    grid-template-columns: 1fr;
-    gap: 1.4rem;
-  }
+  border-radius: 4px;
 }
 
 .lp-strip {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.3rem 3rem;
-  padding: 1.6rem 0;
-  margin: 2rem 0 0.6rem;
+  gap: 1.4rem 3rem;
+  padding: 1.7rem 0;
+  margin: 2.4rem 0 1rem;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
 .lp-item .t {
-  color: var(--text);
+  color: var(--ink);
   font-weight: 600;
   font-size: 1.02rem;
 }
@@ -261,13 +215,37 @@ section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
   color: var(--muted);
   font-size: .9rem;
   text-align: center;
-  margin-top: 2.6rem;
+  margin-top: 2.8rem;
+}
+
+.lp-detail p {
+  color: var(--muted);
+  line-height: 1.75;
+  margin: 0;
+}
+.lp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lp-list li {
+  color: var(--ink);
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.97rem;
+}
+.lp-list li:last-child {
+  border-bottom: none;
+}
+.lp-list .k {
+  color: var(--accent);
+  font-weight: 600;
 }
 
 .divider {
   border: none;
   border-top: 1px solid var(--border);
-  margin: 2.6rem 0;
+  margin: 2.8rem 0;
 }
 
 /* ---------- tool ---------- */
@@ -276,40 +254,43 @@ section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: .4rem;
+  margin-bottom: .5rem;
 }
 .demo-head p {
   color: var(--muted);
   margin: 0;
 }
 .round {
-  border: 1px solid var(--border);
-  border-radius: 16px;
   background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
   padding: .9rem;
 }
 .result-block {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 1rem 1.2rem;
+  border: 2.5px solid var(--ink);
+  border-radius: 8px;
+  padding: 0.9rem 1.2rem;
   margin-top: .6rem;
+  box-shadow: 6px 7px 0 rgba(21,24,27,0.07);
 }
 .result-plate {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.4rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--accent);
-  letter-spacing: .04em;
+  color: var(--ink);
+  letter-spacing: .05em;
 }
 .result-meta {
   color: var(--muted);
   font-size: .9rem;
+  margin-top: .15rem;
 }
 .stWarning {
-  background: rgba(255,176,32,0.1);
+  background: var(--accent-soft);
   color: var(--accent);
-  border-radius: 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
 }
 
 @media (max-width: 768px) {
@@ -318,13 +299,11 @@ section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
     height: 44px;
   }
   .block-container {
-    padding-top: 4.4rem;
+    padding-top: 4.2rem;
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  .lp-title {
-    font-size: 2.3rem;
-  }
+  .lp-title { font-size: 2.3rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .stButton > button { transition: none; }
@@ -363,13 +342,13 @@ def draw_annotations(img, results):
         font_small = font
     for r in results:
         x1, y1, x2, y2 = r["vehicle_bbox"]
-        draw.rectangle([x1, y1, x2, y2], outline=(255, 176, 32), width=4)
+        draw.rectangle([x1, y1, x2, y2], outline=(23, 72, 143), width=4)
         label = f"{r['vehicle']} · {r['vehicle_confidence']:.2f}"
-        draw.text((x1, y1 - 34), label, fill=(255, 176, 32), font=font_small)
+        draw.text((x1, y1 - 34), label, fill=(23, 72, 143), font=font_small)
         if r["plate"]:
             px1, py1, px2, py2 = r["plate"]["bbox"]
-            draw.rectangle([px1, py1, px2, py2], outline=(53, 196, 142), width=4)
-            draw.text((px1, py1 - 34), r["plate"]["text"], fill=(53, 196, 142), font=font)
+            draw.rectangle([px1, py1, px2, py2], outline=(21, 122, 78), width=4)
+            draw.text((px1, py1 - 34), r["plate"]["text"], fill=(21, 122, 78), font=font)
     return img
 
 
@@ -404,6 +383,7 @@ with st.sidebar:
         st.image("LogoVall.jpeg", width=150)
     except Exception:
         pass
+    st.markdown("### Vall Plate Detector")
     route = st.radio("Navigasi", ["Beranda", "Deteksi"], label_visibility="collapsed", key="nav")
     st.divider()
     st.caption("Membaca plat nomor dari foto kendaraan.")
@@ -450,12 +430,12 @@ if route == "Beranda":
     st.markdown("## Detail proyek")
 
     st.markdown(
-        "<div class='lp-detail'><p>"
+        "<p style='color:var(--muted);line-height:1.75;max-width:70ch'>"
         "Vall Plate Detector adalah proyek web yang membaca plat nomor dari foto "
         "kendaraan. Aplikasi ini memakai optical character recognition (OCR) untuk "
         "menemukan dan menandai teks plat pada gambar, sehingga hasilnya langsung "
         "terlihat tanpa perlu disetel manual."
-        "</p></div>",
+        "</p>",
         unsafe_allow_html=True,
     )
 
