@@ -12,6 +12,21 @@ from pipeline import PlatePipeline
 
 st.set_page_config(page_title="Deteksi Plat Nomor", page_icon="🚗", layout="wide")
 
+with st.sidebar:
+    try:
+        st.image("LogoVall.jpeg", use_container_width=True)
+    except Exception:
+        pass
+    st.title("Deteksi Plat Nomor")
+    st.caption("Deteksi plat nomor menggunakan EasyOCR.")
+    st.divider()
+    st.markdown(
+        "**Cara pakai:**\n"
+        "- Tab **Upload Gambar**: unggah foto kendaraan.\n"
+        "- Tab **Realtime Webcam**: ambil foto dari kamera.\n\n"
+        "Hasil plat nomor akan dianotasi pada gambar."
+    )
+
 
 def get_pipeline():
     if "pipeline" not in st.session_state:
