@@ -430,10 +430,7 @@ if route == "Beranda":
         st.markdown(
             "<div class='lp-media'><img class='main' src='data:image/jpeg;base64,"
             + _b64_image("samples/sample_plate1.jpg")
-            + "' alt='contoh kendaraan'>"
-            "<img class='logo-badge' src='data:image/jpeg;base64,"
-            + _b64_image("LogoVall.jpeg")
-            + "' alt='Vall'></div>",
+            + "' alt='contoh kendaraan'></div>",
             unsafe_allow_html=True,
         )
 
