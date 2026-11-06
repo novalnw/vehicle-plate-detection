@@ -1,3 +1,4 @@
+import base64
 import sys
 from io import BytesIO
 from pathlib import Path
@@ -10,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent / "backend"))
 
 from pipeline import PlatePipeline
 
-st.set_page_config(page_title="Deteksi Plat Nomor", page_icon="🚗", layout="wide")
+st.set_page_config(page_title="Vall — Deteksi Plat Nomor", page_icon="🚗", layout="wide")
 
 CUSTOM_CSS = """
 <style>
@@ -34,11 +35,28 @@ html, body, [class*="css"] {
 
 .stApp {
   background:
-    radial-gradient(900px 420px at 85% -10%, rgba(255,176,32,0.08), transparent 60%),
+    radial-gradient(900px 460px at 85% -10%, rgba(255,176,32,0.09), transparent 60%),
     linear-gradient(180deg, #101418 0%, #0C0F12 100%);
 }
 
-/* clean top bar: hide deploy/toolbar, keep sidebar hamburger */
+.block-container {
+  padding-top: 2.4rem;
+  padding-bottom: 4rem;
+  max-width: 1120px;
+}
+
+h1, h2, h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+h1 {
+  font-size: 2.6rem;
+  line-height: 1.04;
+  font-weight: 700;
+}
+
+/* clean top bar */
 [data-testid="stHeader"] {
   background: transparent !important;
   border-bottom: 1px solid rgba(255,255,255,0.04);
@@ -50,47 +68,18 @@ html, body, [class*="css"] {
 [data-testid="stSidebarCollapsedControl"] {
   color: var(--text);
 }
-@media (max-width: 768px) {
-  [data-testid="stSidebarCollapsedControl"] {
-    width: 44px;
-    height: 44px;
-  }
-  .block-container {
-    padding-top: 4.4rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
-
-.block-container {
-  padding-top: 2.6rem;
-  padding-bottom: 4rem;
-  max-width: 1100px;
-}
-
-/* headers */
-h1, h2, h3 {
-  font-family: 'Space Grotesk', sans-serif;
-  color: var(--text);
-  letter-spacing: -0.02em;
-}
-h1 {
-  font-size: 2.5rem;
-  line-height: 1.05;
-  font-weight: 700;
-}
 
 /* sidebar */
 section[data-testid="stSidebar"] {
   background: linear-gradient(180deg, #151A1F, #101418);
   border-right: 1px solid var(--border);
 }
-section[data-testid="stSidebar"] * {
-  font-family: 'Inter', sans-serif;
+section[data-testid="stSidebar"] .stRadio label {
+  color: var(--muted);
+  font-weight: 500;
 }
-section[data-testid="stSidebar"] h1 {
-  font-size: 1.5rem;
-  color: var(--text);
+section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
+  color: var(--accent);
 }
 
 /* tabs */
@@ -121,7 +110,7 @@ section[data-testid="stSidebar"] h1 {
   background: var(--accent);
   border: 1px solid var(--accent);
   border-radius: 999px;
-  padding: 0.55rem 1.4rem;
+  padding: 0.6rem 1.5rem;
   transition: transform .12s ease, box-shadow .12s ease;
 }
 .stButton > button:hover {
@@ -134,6 +123,16 @@ section[data-testid="stSidebar"] h1 {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
+.stButton > button[kind="secondary"] {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+.stButton > button[kind="secondary"]:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: none;
+}
 
 /* file uploader */
 .stFileUploader section {
@@ -145,56 +144,81 @@ section[data-testid="stSidebar"] h1 {
   border-color: var(--accent);
 }
 
-/* hero */
-.hero {
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 1.8rem;
-  margin-bottom: 2rem;
+/* ---------- landing ---------- */
+.lp-hero {
+  padding: 1.2rem 0 2rem;
 }
-.hero .tag {
+.lp-tag {
   color: var(--accent);
   font-weight: 600;
-  font-size: .95rem;
-  margin-bottom: .6rem;
+  font-size: 1rem;
+  margin-bottom: .8rem;
 }
-.hero p {
+.lp-title {
+  font-size: 3.1rem;
+  line-height: 1.02;
+  max-width: 14ch;
+}
+.lp-sub {
   color: var(--muted);
-  font-size: 1.05rem;
+  font-size: 1.12rem;
+  line-height: 1.65;
   max-width: 42ch;
-  line-height: 1.6;
+  margin-top: 1.2rem;
+}
+.lp-cta {
+  display: flex;
+  gap: .7rem;
+  margin-top: 1.8rem;
+  flex-wrap: wrap;
+}
+.lp-media {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+}
+.lp-media img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-/* feature strip */
-.feature-strip {
+.lp-strip {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.2rem 2.5rem;
-  padding: 1.1rem 0 1.6rem;
-  margin-bottom: 2rem;
+  gap: 1.3rem 3rem;
+  padding: 1.6rem 0;
+  margin: 2rem 0 0.6rem;
+  border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
-.feature {
-  display: flex;
-  align-items: baseline;
-  gap: .7rem;
-  color: var(--text);
-}
-.feature .step {
-  font-family: 'Space Grotesk', sans-serif;
-  color: var(--accent);
-  font-weight: 700;
-  font-size: 1.15rem;
-}
-.feature .t {
+.lp-item .t {
   color: var(--text);
   font-weight: 600;
+  font-size: 1.02rem;
 }
-.feature .d {
+.lp-item .d {
   color: var(--muted);
   font-size: .92rem;
+  margin-top: .15rem;
 }
 
-/* demo */
+.lp-note {
+  color: var(--muted);
+  font-size: .9rem;
+  text-align: center;
+  margin-top: 2.6rem;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.6rem 0;
+}
+
+/* ---------- tool ---------- */
 .demo-head {
   display: flex;
   align-items: baseline;
@@ -212,8 +236,6 @@ section[data-testid="stSidebar"] h1 {
   background: var(--surface);
   padding: .9rem;
 }
-
-/* results */
 .result-block {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -238,6 +260,20 @@ section[data-testid="stSidebar"] h1 {
   border-radius: 12px;
 }
 
+@media (max-width: 768px) {
+  [data-testid="stSidebarCollapsedControl"] {
+    width: 44px;
+    height: 44px;
+  }
+  .block-container {
+    padding-top: 4.4rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .lp-title {
+    font-size: 2.3rem;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .stButton > button { transition: none; }
 }
@@ -250,6 +286,10 @@ def get_pipeline():
     if "pipeline" not in st.session_state:
         st.session_state["pipeline"] = PlatePipeline()
     return st.session_state["pipeline"]
+
+
+def _b64_image(path):
+    return base64.b64encode(Path(path).read_bytes()).decode()
 
 
 def draw_annotations(img, results):
@@ -276,7 +316,7 @@ def render_results(results):
     if not results:
         st.warning("Tidak ada plat nomor yang terdeteksi pada gambar.")
         return
-    for idx, r in enumerate(results, 1):
+    for r in results:
         plate_text = r["plate"]["text"] if r["plate"] else "-"
         plate_conf = r["plate"]["confidence"] if r["plate"] else "-"
         st.markdown(
@@ -300,61 +340,80 @@ def process_and_render(pil_image, caption):
 # ---------------- Sidebar ----------------
 with st.sidebar:
     try:
-        st.image("LogoVall.jpeg", use_container_width=True)
+        st.image("LogoVall.jpeg", width=150)
     except Exception:
         pass
-    st.markdown("## Deteksi Plat Nomor")
-    st.caption("Membaca plat nomor dari foto kendaraan.")
+    route = st.radio("Navigasi", ["Beranda", "Deteksi"], label_visibility="collapsed", key="nav")
     st.divider()
-    st.markdown("Ditenagai EasyOCR · berjalan di Streamlit Cloud.")
+    st.caption("Membaca plat nomor dari foto kendaraan.")
 
-# ---------------- Hero ----------------
-hero_logo, hero_body = st.columns([1, 4], vertical_alignment="center")
-with hero_logo:
-    try:
-        st.image("LogoVall.jpeg", width=118)
-    except Exception:
-        pass
-with hero_body:
+# ---------------- Landing ----------------
+if route == "Beranda":
     st.markdown(
-        "<div class='hero'>"
-        "<div class='tag'>Pendeteksi plat nomor</div>"
-        "<h1>Foto kendaraan, langsung terbaca platnya.</h1>"
-        "<p>Unggah foto atau pakai kamera. Sistem menemukan teks plat nomor "
-        "dan menandainya pada gambar.</p>"
+        "<div class='lp-hero'>"
+        "<div class='lp-tag'>Pendeteksi plat nomor</div>"
+        "<div class='lp-title'>Plat nomor terbaca dalam hitungan detik.</div>"
+        "<div class='lp-sub'>Unggah foto kendaraan atau pakai kamera langsung dari HP. "
+        "Sistem mendeteksi dan membaca plat nomor secara otomatis.</div>"
         "</div>",
         unsafe_allow_html=True,
     )
 
-st.markdown(
-    "<div class='feature-strip'>"
-    "<div class='feature'><span class='step'>1</span><span>"
-    "<span class='t'>Unggah gambar</span> · <span class='d'>kirim foto kendaraan</span></span></div>"
-    "<div class='feature'><span class='step'>2</span><span>"
-    "<span class='t'>Webcam langsung</span> · <span class='d'>ambil dari kamera</span></span></div>"
-    "<div class='feature'><span class='step'>3</span><span>"
-    "<span class='t'>Hasil anotasi</span> · <span class='d'>plat ditandai di gambar</span></span></div>"
-    "</div>",
-    unsafe_allow_html=True,
-)
+    hero_l, hero_r = st.columns([6, 5], gap="large")
+    with hero_l:
+        st.markdown("<div class='lp-cta'>", unsafe_allow_html=True)
+        if st.button("Mulai deteksi", type="primary", use_container_width=True):
+            st.session_state["nav"] = "Deteksi"
+            st.rerun()
+        if st.button("Lihat contoh", type="secondary", use_container_width=True):
+            st.session_state["nav"] = "Deteksi"
+            st.session_state["demo_scroll"] = True
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
+    with hero_r:
+        st.markdown(
+            "<div class='lp-media'><img src='data:image/jpeg;base64,"
+            + _b64_image("samples/sample_plate1.jpg")
+            + "' alt='contoh kendaraan'></div>",
+            unsafe_allow_html=True,
+        )
 
-# ---------------- Demo (contoh) ----------------
-st.markdown(
-    "<div class='demo-head'>"
-    "<h2 style='margin-bottom:0'>Coba dengan contoh</h2>"
-    "<p>Belum punya foto? Pilih salah satu contoh di bawah.</p>"
-    "</div>",
-    unsafe_allow_html=True,
-)
+    st.markdown(
+        "<div class='lp-strip'>"
+        "<div class='lp-item'><div class='t'>Foto apa pun</div>"
+        "<div class='d'>JPG, PNG, sampai foto webcam.</div></div>"
+        "<div class='lp-item'><div class='t'>Hasil seketika</div>"
+        "<div class='d'>Teks plat ditandai pada gambar.</div></div>"
+        "<div class='lp-item'><div class='t'>Gratis & online</div>"
+        "<div class='d'>Jalan langsung di browser.</div></div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
-demo_cols = st.columns(2)
-samples = [
-    ("samples/sample_plate1.jpg", "Contoh 1", "demo1"),
-    ("samples/sample_plate2.jpg", "Contoh 2", "demo2"),
-]
-for col, (path, name, key) in zip(demo_cols, samples):
-    with col:
-        with st.container():
+    st.markdown("<div class='lp-note'>Vall · dibuat dengan Streamlit</div>", unsafe_allow_html=True)
+
+# ---------------- Tool ----------------
+else:
+    if st.session_state.get("demo_scroll"):
+        st.session_state["demo_scroll"] = False
+
+    st.markdown(
+        "<div class='demo-head'>"
+        "<h2 style='margin-bottom:0'>Coba dengan contoh</h2>"
+        "<p>Belum punya foto? Pilih salah satu contoh di bawah.</p>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+    demo_cols = st.columns(2)
+    for col, (path, name, key) in zip(
+        demo_cols,
+        [
+            ("samples/sample_plate1.jpg", "Contoh 1", "demo1"),
+            ("samples/sample_plate2.jpg", "Contoh 2", "demo2"),
+        ],
+    ):
+        with col:
             st.markdown("<div class='round'>", unsafe_allow_html=True)
             st.image(path, caption=name, use_container_width=True)
             if st.button("Uji contoh ini", key=key):
@@ -362,26 +421,24 @@ for col, (path, name, key) in zip(demo_cols, samples):
                 process_and_render(img, f"Hasil — {name}")
             st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<hr style='border-color:var(--border);margin:2.6rem 0'>", unsafe_allow_html=True)
+    st.markdown("<hr class='divider'>", unsafe_allow_html=True)
+    st.markdown("## Deteksi langsung")
 
-# ---------------- Fitur utama ----------------
-st.markdown("## Deteksi langsung")
+    tab_upload, tab_webcam = st.tabs(["Unggah gambar", "Webcam langsung"])
 
-tab_upload, tab_webcam = st.tabs(["Unggah gambar", "Webcam langsung"])
+    with tab_upload:
+        uploaded = st.file_uploader("Pilih foto kendaraan", type=["jpg", "jpeg", "png", "bmp", "webp"])
+        if uploaded is not None:
+            image = Image.open(BytesIO(uploaded.read())).convert("RGB")
+            st.image(image, caption="Gambar asli", use_container_width=True)
+            if st.button("Deteksi dari gambar", key="detect_upload"):
+                process_and_render(image, "Hasil deteksi")
 
-with tab_upload:
-    uploaded = st.file_uploader("Pilih foto kendaraan", type=["jpg", "jpeg", "png", "bmp", "webp"])
-    if uploaded is not None:
-        image = Image.open(BytesIO(uploaded.read())).convert("RGB")
-        st.image(image, caption="Gambar asli", use_container_width=True)
-        if st.button("Deteksi dari gambar", key="detect_upload"):
-            process_and_render(image, "Hasil deteksi")
-
-with tab_webcam:
-    st.caption("Aktifkan kamera, ambil foto, lalu deteksi.")
-    pic = st.camera_input("Ambil foto dari webcam")
-    if pic is not None:
-        image = Image.open(BytesIO(pic.read())).convert("RGB")
-        st.image(image, caption="Foto dari webcam", use_container_width=True)
-        if st.button("Deteksi dari webcam", key="detect_webcam"):
-            process_and_render(image, "Hasil deteksi webcam")
+    with tab_webcam:
+        st.caption("Aktifkan kamera, ambil foto, lalu deteksi.")
+        pic = st.camera_input("Ambil foto dari webcam")
+        if pic is not None:
+            image = Image.open(BytesIO(pic.read())).convert("RGB")
+            st.image(image, caption="Foto dari webcam", use_container_width=True)
+            if st.button("Deteksi dari webcam", key="detect_webcam"):
+                process_and_render(image, "Hasil deteksi webcam")
